@@ -7,13 +7,13 @@ import lombok.*;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Builder
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BusinessModel {
-    private String name;
-    private String lastName;
-    private String gender;
-    private boolean isMarried;
+    private boolean success;
+    private String deck_id;
+    private int remaining;
+    private boolean shuffled;
 }
