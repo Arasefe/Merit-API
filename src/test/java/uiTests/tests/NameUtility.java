@@ -1,6 +1,5 @@
 package uiTests.tests;
 
-import org.codehaus.groovy.transform.SourceURIASTTransformation;
 
 public class NameUtility {
     public static void main(String[] args) {
