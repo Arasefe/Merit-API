@@ -75,8 +75,10 @@ public class WebAutomation {
         // Select Continue to Bag
         driver.findElement(By.xpath("//a[@data-testid='go-to-cart']")).click();
         // Validate that 2 items are added to Cart
-
-
+        String actualCount = driver.findElement(By.xpath("//span[@class='hnf-btn__inner js-shopping-cart-icon']")).getAttribute("data-count");
+        String expectedCount = "2";
+        // Verify Cart item count
+        Assertions.assertEquals(actualCount,expectedCount);
         // Click on Use a discount code
         driver.findElement(By.xpath("//span[text()='Use a discount code']")).click();
         // Enter the discount code
