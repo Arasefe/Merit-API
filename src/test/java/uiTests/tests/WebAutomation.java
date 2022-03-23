@@ -2,8 +2,10 @@ package uiTests.tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
@@ -56,13 +58,12 @@ public class WebAutomation {
         // Scroll Down
         js.executeScript("window.scrollBy(0,500)");
         // Add the first Item to Cart
-        driver.findElement(By.xpath("//*[@id='content']/div/div/div/div[2]/div[1]/div/div[4]/div/div/button/span/span")).click();
+        driver.findElement(By.xpath("//span[text()='Add to bag']")).click();
         // Select Continue to Bag
         driver.findElement(By.xpath("//a[@data-testid='go-to-cart']")).click();
-        // Go to
-        driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
-        // Navigate to: https://www.ikea.com/us/en
-        driver.navigate().back();
+
+        driver.navigate().refresh();
+
         // search for "table"
         driver.findElement(By.xpath("//input[@name='q']")).sendKeys("table"+ Keys.RETURN);
         driver.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
@@ -86,13 +87,22 @@ public class WebAutomation {
 
 
         // Click on Use a discount code
+        driver.findElement(By.xpath("//span[text()='Use a discount code']")).click();
+        // Enter the discount code
+        driver.findElement(By.xpath("//input[@id='discountCode']")).sendKeys(randomStringGenerator());
+        // Select Apply Discount
+        driver.findElement(By.xpath("//span[text()='Apply discount']")).click();
+        // Verify error message
+        String actualErrorMessage = driver.findElement(By.xpath("//span[@id='discount-code__error']/span")).getText();
+        String expectedErrorMessage = "You've added an invalid coupon code. Please try again.";
+        Assertions.assertEquals(actualErrorMessage,expectedErrorMessage);
 
     }
 
     public String randomStringGenerator(){
-        int leftLimit = 97; // letter 'a'
-        int rightLimit = 122; // letter 'z'
-        int targetStringLength = 10;
+        int leftLimit = 97;     // letter 'a'
+        int rightLimit = 122;   // letter 'z'
+        int targetStringLength = 15;
         Random random = new Random();
 
         return random.ints(leftLimit, rightLimit + 1)
