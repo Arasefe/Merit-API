@@ -1,19 +1,16 @@
 package uiTests.tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import uiTests.pages.IkeaMainPage;
-import utils.Driver;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class WebAutomation {
@@ -35,11 +32,12 @@ public class WebAutomation {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
     }
+    @AfterClass
+    public static void tearDown(){
+        driver.close();
+    }
     @Test
-    public void searchForItem(){
-
-        WebDriverWait wait = new WebDriverWait(driver,20);
-
+    public void searchForSofaAndTable(){
         driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
         // Navigate to: https://www.ikea.com/us/en
         driver.navigate().to("https://www.ikea.com/us/en");
@@ -48,24 +46,58 @@ public class WebAutomation {
         driver.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
         // Scroll Down
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollBy(0,-1000)","");
-
+        js.executeScript("window.scrollBy(0,500)");
         // Click Cookies Ok
         driver.findElement(By.xpath("//*[@id='onetrust-accept-btn-handler']")).click();
-
         // pick the 1st item in the list and add it to the cart
         driver.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
         // Select First Item
         driver.findElement(By.xpath("//*[@id='search-results']/div[1]/a")).click();
         // Scroll Down
-        js.executeScript("window.scrollBy(0,-500)","");
+        js.executeScript("window.scrollBy(0,500)");
         // Add the first Item to Cart
-        driver.findElement(By.xpath("//div[@id='onetrust-group-container']")).click();
+        driver.findElement(By.xpath("//*[@id='content']/div/div/div/div[2]/div[1]/div/div[4]/div/div/button/span/span")).click();
+        // Select Continue to Bag
+        driver.findElement(By.xpath("//a[@data-testid='go-to-cart']")).click();
+        // Go to
+        driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+        // Navigate to: https://www.ikea.com/us/en
+        driver.navigate().back();
+        // search for "table"
+        driver.findElement(By.xpath("//input[@name='q']")).sendKeys("table"+ Keys.RETURN);
+        driver.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+        // Scroll Down
+        js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(0,500)");
+
+        // pick the 3rd item in the list and add it to the cart
+        driver.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+        // Select First Item
+        driver.findElement(By.xpath("//*[@id='search-results']/div[3]/a")).click();
+        // Scroll Down
+        js.executeScript("window.scrollBy(0,500)");
+        // Add the third Item to Cart
+        driver.findElement(By.xpath("//span[text()='Add to bag']")).click();
+
+        // Select Continue to Bag
+        driver.findElement(By.xpath("//a[@data-testid='go-to-cart']")).click();
+
+        // Validate that 2 items are added to Cart
 
 
-        //driver.close();
+        // Click on Use a discount code
 
     }
 
+    public String randomStringGenerator(){
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 10;
+        Random random = new Random();
 
+        return random.ints(leftLimit, rightLimit + 1)
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+    }
 }
