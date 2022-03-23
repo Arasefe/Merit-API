@@ -6,65 +6,41 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
+import java.util.concurrent.TimeUnit;
+
 
 public class Driver {
-    private static final ThreadLocal<WebDriver> driverPool = new ThreadLocal<>();
+    private Driver(){}
 
-    private Driver() {
-    }
+    private static WebDriver driver;
 
-    public static WebDriver getDriver() {
-        if (driverPool.get() == null) {
-            //it will make that 2 threads cannot access this piece of code at the same time only 1 thread at the time
-            synchronized (Driver.class) {
-                String browser = ConfigurationReader.getProperty("browser");
-                //jenkins command: test -Dcucumber.filter.tags="@smoke" -Dbrowser="chrome"
-                //custom environment variables: -Dbrowser
-                //-Dproperty  = then read in java System.getProperty("property")
-                //if env variable was specified
-                if (System.getProperty("browser") != null) {
-                    //then change browser type
-                    //regardless on value configuration.properties
-                    System.out.println("Browser type was changed to: " + System.getProperty("browser"));
-                    browser = System.getProperty("browser");
-                }
+    public static WebDriver getDriver(){
 
-                switch (browser) {
-                    case "chrome" -> {
-                        //driverPool.set(new ChromeDriver(new ChromeOptions().setHeadless(true)));
-                        //System.setProperty("webdriver.chrome.driver", "src/test/drivers/chromedriver");
-                        WebDriverManager.chromedriver().setup();
-                        driverPool.set(new ChromeDriver());
-                        driverPool.get().manage().window().fullscreen();
-                    }
+        if(driver == null){
 
-                    case "firefox" -> {
-                        //driverPool.set(new FirefoxDriver(new FirefoxOptions().setHeadless(true)));
-                        //System.setProperty("webdriver.gecko.driver", "src/test/drivers/geckodriver");
-                        WebDriverManager.firefoxdriver().setup();
-                        driverPool.set(new FirefoxDriver());
-                        driverPool.get().manage().window().fullscreen();
-                    }
+            String browser = ConfigurationReader.getProperty("browser");
+            switch (browser){
+                case "chrome":
+                    WebDriverManager.chromedriver().setup();
+                    driver = new ChromeDriver();
 
-                    case "Edge Driver" -> {
-                        // System.setProperty("webdriver.edge.driver", "src/test/drivers/msedgedriver");
-                        WebDriverManager.edgedriver().setup();
-                        driverPool.set(new InternetExplorerDriver());
-                        driverPool.get().manage().window().fullscreen();
-                    }
+                    break;
+                case "firefox":
+                    WebDriverManager.firefoxdriver().setup();
+                    driver = new FirefoxDriver();
 
-
-                    default -> throw new RuntimeException("No such a browser yet!");
-                }
+                    break;
             }
         }
-        return driverPool.get();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        return driver;
     }
 
-    public static void closeDriver() {
-        if (driverPool.get() != null) {
-            driverPool.get().quit();
-            driverPool.remove();
+    public static void closeDriver(){
+        if(driver!=null){
+            driver.quit();
+            driver = null;
         }
     }
 
