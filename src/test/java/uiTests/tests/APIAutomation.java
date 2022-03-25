@@ -2,7 +2,6 @@ package uiTests.tests;
 
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.restassured.RestAssured.*;
-import static org.junit.Assert.assertFalse;
 
 public class APIAutomation {
 

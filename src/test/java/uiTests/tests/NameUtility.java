@@ -2,10 +2,9 @@ package uiTests.tests;
 
 
 public class NameUtility {
-    static String fullName;
     public static void main(String[] args) {
 
-        System.out.println(convertNameToInitials("Aras     Efe Yildirim   "));
+        System.out.println(convertNameToInitials("Aras e"));
 
     }
 
